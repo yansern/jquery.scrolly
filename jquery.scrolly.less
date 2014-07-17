@@ -39,7 +39,7 @@
 
 [data-scrolly-axis] {
     position: absolute;
-    border: @scrolly solid transparent;
+    border: @scrolly-size solid transparent;
     cursor: pointer;
     z-index: 1;
     .transition(opacity .1s ease);
@@ -50,7 +50,7 @@
         height: 100%;
         content: " ";
         background: rgba(0, 0, 0, 0.3);
-        border-radius: @scrolly;
+        border-radius: @scrolly-size;
         .transition(background .2s ease);
     }
 
@@ -64,7 +64,7 @@
 [data-scrolly-axis=y] {
     top: 0;
     right: 0;
-    width: @scrolly * 3;
+    width: @scrolly-size * 3;
     height: 100%;
 }
 
@@ -72,5 +72,5 @@
     left: 0;
     bottom: 0;
     width: 100%;
-    height: @scrolly * 3;
+    height: @scrolly-size * 3;
 }
