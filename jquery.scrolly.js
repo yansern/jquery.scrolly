@@ -46,17 +46,17 @@ var doco     = $(document),
             return axis;
         },
 
-        viewport: $.memoize(function(node) {
+        viewport: function(node) {
             return $(node).find("> " + viewport)[0] || $(node).wrapInner("<div data-scrolly-viewport>").find("> " + viewport)[0];
-        }),
+        },
 
-        x: $.memoize(function(node) {
+        x: function(node) {
             return $(node).find("> s[data-scrolly-axis=x]")[0] || $('<s data-scrolly-axis="x">').appendTo(node)[0];
-        }),
+        },
 
-        y: $.memoize(function(node) {
+        y: function(node) {
             return $(node).find("> s[data-scrolly-axis=y]")[0] || $('<s data-scrolly-axis="y">').appendTo(node)[0];
-        }),
+        },
 
         update: function(node, dx, dy, fromScrollbar) {
 
@@ -106,8 +106,6 @@ var doco     = $(document),
         },
 
         reset: function(node) {
-            var methods = ["axis", "viewport", "x", "y"], method;
-            while (method = methods.shift()) self[method].reset(node);
             $(node).removeData("axis");
         }
     };
