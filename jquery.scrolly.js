@@ -26,7 +26,7 @@ var doco     = $(document),
     toggle = function(n) {
         return n < 1 ? "block" : "none";
     },
-    updated = {},
+    DOMChangeEvent = ns("DOMSubtreeModified propertychange"),
     self = {
 
         axis: function(node, mode) {
@@ -90,11 +90,15 @@ var doco     = $(document),
                 }
             }
 
-            clearTimeout(updated[node]);
+            var elem = $(node);
 
-            updated[node] = setTimeout(function(){
-                delete updated[node];
-            }, 1000);
+            clearTimeout(elem.data("scrolly_timer"));
+
+            elem.data("scrolly_timer",
+                setTimeout(function(){
+                    elem.removeData("scrolly_timer");
+                }, 500)
+            );
         },
 
         enable: function(node) {
@@ -125,11 +129,21 @@ $.fn.scrolly = function(method) {
 // Last update
 doco.on(ns("mouseover"), scrolly, function() {
 
-        var node = this;
+        var node = this,
+            elem = $(node);
 
-        if ($(node).hasClass(disabled)) return;
+        if (elem.hasClass(disabled)) return;
 
-        !updated[node] && self.update(node);
+        !elem.data("scrolly_timer") && self.update(node);
+
+        elem.off(DOMChangeEvent)
+            .on(DOMChangeEvent, $.throttle(function(){
+                if (elem.hasClass(disabled)) return;
+                self.update(node);
+            }, 250));
+    })
+    .on(ns("mouseout"), scrolly, function() {
+        $(this).off(DOMChangeEvent);
     })
     .on(ns("mousewheel"), scrolly, function(event, delta, dx, dy) {
         if ($(this).hasClass(disabled)) return;
@@ -156,10 +170,6 @@ doco.on(ns("mouseover"), scrolly, function() {
                 node.removeClass("scrolling");
                 doco.off(ns("mousemove mouseup"));
             });
-    })
-    .on(ns("DOMSubtreeModified propertychange"), scrolly, $.throttle(function(){
-        if ($(this).hasClass(disabled)) return;
-        self.update(this);
-    }, 250));
+    });
 
 })();
